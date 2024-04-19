@@ -4,7 +4,22 @@ pragma solidity ^0.8.13;
 import {Test, console2} from "forge-std/Test.sol";
 import {Lamport} from "../src/Lamport.sol";
 
+contract LamportFull {
+    function verify(
+        bytes32 pkHash,
+        bytes32[512] memory pks,
+        bytes32[256] memory sigs,
+        bytes32 msgHash
+    ) public {
+        Lamport.verify(pkHash, pks, sigs, msgHash);
+    }
+}
+
 contract LamportTest is Test {
+    LamportFull flp;
+    function setUp() public {
+        flp = new LamportFull();
+    }
     function test_verify_0() public {
         bytes32[512] memory pks;
         for (uint256 i = 0; i < 512; i++) {
@@ -16,7 +31,7 @@ contract LamportTest is Test {
         for (uint256 i = 0; i < 256; i++) {
             sigs[i] = bytes32(i);
         }
-        Lamport.verify(pkHash, pks, sigs, msgHash);
+        flp.verify(pkHash, pks, sigs, msgHash);
     }
     function test_verify_1() public {
         bytes32[512] memory pks;
@@ -29,7 +44,7 @@ contract LamportTest is Test {
         for (uint256 i = 0; i < 256; i++) {
             sigs[i] = bytes32(256 + i);
         }
-        Lamport.verify(pkHash, pks, sigs, msgHash);
+        flp.verify(pkHash, pks, sigs, msgHash);
     }
     function test_verify_random() public {
         bytes32[512] memory pks;
@@ -47,6 +62,6 @@ contract LamportTest is Test {
                 sigs[i] = bytes32(i);
             }
         }
-        Lamport.verify(pkHash, pks, sigs, msgHash);
+        flp.verify(pkHash, pks, sigs, msgHash);
     }
 }
